@@ -1,0 +1,24 @@
+{
+  "name": "readless",
+  "scripts": {
+    "build": "rspack build",
+    "dev": "rspack serve"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.8.3",
+    "@rspack/cli": "^0.7.5",
+    "@rspack/core": "^0.7.5",
+    "@types/bun": "latest",
+    "chrome-types": "^0.1.297",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "openai": "^4.53.2"
+  },
+  "private": true,
+  "version": "1.0.0"
+}
