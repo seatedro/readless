@@ -61,7 +61,7 @@ async function summarizeText(text: string): Promise<string> {
   }
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4",
+    model: "gpt-4o-mini",
     messages: [
       {
         role: "system",

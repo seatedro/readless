@@ -1,29 +1,13 @@
-# Rsbuild Project
+# readless
 
-## Setup
+## setup
 
-Install the dependencies:
+follow the instructions in the [chrome extension docs](https://developer.chrome.com/docs/extensions/get-started)
 
-```bash
-pnpm install
-```
+## Todo
 
-## Get Started
-
-Start the dev server:
-
-```bash
-pnpm dev
-```
-
-Build the app for production:
-
-```bash
-pnpm build
-```
-
-Preview the production build locally:
-
-```bash
-pnpm preview
-```
+- [x] get api key from storage
+- [x] working app lulw
+- [ ] better ui
+- [ ] tailwind ig?
+- [ ] stream the response
