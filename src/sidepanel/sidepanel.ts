@@ -1,6 +1,10 @@
+import { setTheme } from "../util/theme";
+
 let port: chrome.runtime.Port;
 
 document.addEventListener("DOMContentLoaded", () => {
+  setTheme();
+
   const summarizeBtn = document.getElementById(
     "summarizeBtn",
   ) as HTMLButtonElement;

@@ -1,17 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-	<title>readless summary</title>
-	<link rel="stylesheet" type="text/css" href="sidepanel.css">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>readless Side Panel</title>
+	<link rel="stylesheet" href="index.css">
 </head>
 
-<body>
-	<div id="container">
-		<button class="btn" id="summarizeBtn">generate summary</button>
-		<div id="summary">
-			<h2>summary</h2>
-			<div id="summaryContent"></div>
+<body class="bg-gray-100 dark:bg-gray-900 h-screen transition-colors duration-200">
+	<div id="container" class="flex flex-col h-full p-4 space-y-4">
+		<button id="summarizeBtn"
+			class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300">Generate
+			Summary</button>
+
+		<div id="summary" class="flex-1 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md overflow-y-auto">
+			<h2 class="text-xl font-bold mb-2 text-gray-800 dark:text-white">Summary</h2>
+			<div id="summaryContent" class="text-gray-700 dark:text-gray-300"></div>
 		</div>
 	</div>
 	<script src="sidepanel.js"></script>

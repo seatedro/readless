@@ -2,6 +2,13 @@ import OpenAI from "openai";
 
 let openai: OpenAI;
 let sidepanelPort: chrome.runtime.Port | null = null;
+let user: {
+  history: { originalText: string; summary: string }[];
+  isSummarizing: boolean;
+} = {
+  history: [],
+  isSummarizing: false,
+};
 
 chrome.storage.sync.get(["openaiApiKey"], (result) => {
   if (result.openaiApiKey) {
@@ -21,7 +28,8 @@ chrome.runtime.onConnect.addListener((port) => {
 });
 
 function handleSidepanelMessage(msg: any) {
-  if (msg.action === "getSelectedText") {
+  if (msg.action === "getSelectedText" && !user.isSummarizing) {
+    user.isSummarizing = true;
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const activeTab = tabs[0];
       if (activeTab.id) {
@@ -40,7 +48,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             action: "displaySummary",
             summary: summary,
           });
+          user.history.push({
+            originalText: request.text,
+            summary: summary,
+          });
         }
+        user.isSummarizing = false;
+        console.log(user);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -50,6 +64,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             message: "An error occurred while summarizing",
           });
         }
+        user.isSummarizing = false;
+        console.log(user);
       });
   }
   return true;

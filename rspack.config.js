@@ -23,10 +23,6 @@ module.exports = {
         use: "builtin:swc-loader",
         exclude: /node_modules/,
       },
-      {
-        test: /\.css$/,
-        use: ["style-loader", "css-loader"],
-      },
     ],
   },
   plugins: [
@@ -41,11 +37,7 @@ module.exports = {
       chunks: ["sidepanel"],
     }),
     new rspack.CopyRspackPlugin({
-      patterns: [
-        { from: "public", to: "." },
-        { from: "src/popup/popup.css", to: "popup.css" },
-        { from: "src/sidepanel/sidepanel.css", to: "sidepanel.css" },
-      ],
+      patterns: [{ from: "public", to: "." }],
     }),
   ],
 };

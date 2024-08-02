@@ -1,9 +1,13 @@
+import { setTheme } from "../util/theme";
+
 document.addEventListener("DOMContentLoaded", () => {
+  setTheme();
+
   const apiKeyInput = document.getElementById(
     "apiKeyInput",
   ) as HTMLInputElement;
-  const saveApiKeyBtn = document.getElementById(
-    "saveApiKeyBtn",
+  const editApiKeyBtn = document.getElementById(
+    "editApiKeyBtn",
   ) as HTMLButtonElement;
   const apiKeyStatus = document.getElementById(
     "apiKeyStatus",
@@ -15,35 +19,35 @@ document.addEventListener("DOMContentLoaded", () => {
   // Check if the API key exists in storage
   chrome.storage.sync.get("openaiApiKey", (result) => {
     if (result.openaiApiKey) {
-      apiKeyStatus.textContent = "api key is set!";
+      apiKeyStatus.textContent = "API key is set!";
+      apiKeyInput.value = "••••••••••••••••";
+      apiKeyInput.disabled = true;
     } else {
-      apiKeyStatus.textContent = "please enter your openai api key";
+      apiKeyStatus.textContent = "Please enter your OpenAI API key";
+      apiKeyInput.disabled = false;
     }
+  });
+
+  // Handle API key edit
+  editApiKeyBtn.addEventListener("click", () => {
+    apiKeyInput.disabled = false;
+    apiKeyInput.value = "";
+    apiKeyInput.focus();
   });
 
   // Save the API key to storage
-  saveApiKeyBtn.addEventListener("click", () => {
+  apiKeyInput.addEventListener("blur", () => {
     const apiKey = apiKeyInput.value.trim();
     if (apiKey) {
       chrome.storage.sync.set({ openaiApiKey: apiKey }, () => {
-        apiKeyStatus.textContent = "api key saved!";
-        apiKeyInput.value = "";
+        apiKeyStatus.textContent = "API key saved!";
+        apiKeyInput.value = "••••••••••••••••";
+        apiKeyInput.disabled = true;
       });
     } else {
-      apiKeyStatus.textContent = "please enter a valid api key!";
+      apiKeyStatus.textContent = "Please enter a valid API key!";
     }
   });
-
-  // summarizeBtn.addEventListener("click", () => {
-  //   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-  //     const activeTab = tabs[0];
-  //     if (activeTab.id) {
-  //       // Open the side panel
-  //       // chrome.sidePanel.open({ windowId: activeTab.windowId });
-  //       chrome.tabs.sendMessage(activeTab.id, { action: "summarize" });
-  //     }
-  //   });
-  // });
 
   openSidePanelBtn.addEventListener("click", () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
