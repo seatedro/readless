@@ -1,17 +1,42 @@
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "getSelectedText") {
-    const selectedText = window.getSelection()?.toString();
-    if (selectedText) {
-      chrome.runtime.sendMessage({
-        action: "textSelected",
-        text: selectedText,
-      });
-    } else {
-      chrome.runtime.sendMessage({
-        action: "error",
-        message: "No text selected",
-      });
-    }
+let lastSelectedText: string | null = null;
+let isSelecting = false;
+
+function checkSelection() {
+  const selectedText = window.getSelection()?.toString().trim();
+  if (
+    selectedText &&
+    selectedText !== lastSelectedText &&
+    selectedText.length > 10
+  ) {
+    lastSelectedText = selectedText;
+    chrome.runtime.sendMessage({
+      action: "textSelected",
+      text: selectedText,
+    });
   }
-  return true;
+}
+
+// Start of selection
+document.addEventListener("mousedown", () => {
+  isSelecting = true;
+});
+
+// End of selection
+document.addEventListener("mouseup", () => {
+  if (isSelecting) {
+    isSelecting = false;
+    checkSelection();
+  }
+});
+
+// For touch devices
+document.addEventListener("touchstart", () => {
+  isSelecting = true;
+});
+
+document.addEventListener("touchend", () => {
+  if (isSelecting) {
+    isSelecting = false;
+    setTimeout(checkSelection, 100); // Small delay to ensure the selection is complete
+  }
 });

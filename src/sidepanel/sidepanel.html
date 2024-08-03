@@ -4,18 +4,30 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>readless Side Panel</title>
+	<title>readless side panel</title>
 	<link rel="stylesheet" href="index.css">
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 h-screen transition-colors duration-200">
 	<div id="container" class="flex flex-col h-full p-4 space-y-4">
-		<button id="summarizeBtn"
-			class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300">Generate
-			Summary</button>
-
 		<div id="summary" class="flex-1 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md overflow-y-auto">
-			<h2 class="text-xl font-bold mb-2 text-gray-800 dark:text-white">Summary</h2>
+			<h2 class="flex justify-center text-xl font-bold mb-2 text-gray-800 dark:text-white">summary
+			</h2>
+			<div id="loadingSpinner" class="hidden fill-white justify-center items-center">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+					fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+					stroke-linejoin="round"
+					class="lucide lucide-loader animate-spin rounded-full h-10 w-10 dark:fill-white">
+					<path d="M12 2v4" />
+					<path d="m16.2 7.8 2.9-2.9" />
+					<path d="M18 12h4" />
+					<path d="m16.2 16.2 2.9 2.9" />
+					<path d="M12 18v4" />
+					<path d="m4.9 19.1 2.9-2.9" />
+					<path d="M2 12h4" />
+					<path d="m4.9 4.9 2.9 2.9" />
+				</svg>
+			</div>
 			<div id="summaryContent" class="text-gray-700 dark:text-gray-300"></div>
 		</div>
 	</div>

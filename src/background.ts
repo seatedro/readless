@@ -10,10 +10,13 @@ let user: {
   isSummarizing: false,
 };
 
-chrome.storage.sync.get(["openaiApiKey"], (result) => {
+chrome.storage.sync.get(["openaiApiKey", "userHistory"], (result) => {
   if (result.openaiApiKey) {
     console.log("OpenAI API key found in storage");
     openai = new OpenAI({ apiKey: result.openaiApiKey });
+  }
+  if (result.userHistory) {
+    user.history = result.userHistory;
   }
 });
 
@@ -28,20 +31,10 @@ chrome.runtime.onConnect.addListener((port) => {
 });
 
 function handleSidepanelMessage(msg: any) {
-  if (msg.action === "getSelectedText" && !user.isSummarizing) {
+  if (msg.action === "textSelected" && !user.isSummarizing && sidepanelPort) {
     user.isSummarizing = true;
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const activeTab = tabs[0];
-      if (activeTab.id) {
-        chrome.tabs.sendMessage(activeTab.id, { action: "getSelectedText" });
-      }
-    });
-  }
-}
-
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "textSelected" && sidepanelPort) {
-    summarizeText(request.text)
+    sidepanelPort.postMessage({ action: "summarizing" });
+    summarizeText(msg.text)
       .then((summary) => {
         if (sidepanelPort) {
           sidepanelPort.postMessage({
@@ -49,12 +42,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             summary: summary,
           });
           user.history.push({
-            originalText: request.text,
+            originalText: msg.text,
             summary: summary,
           });
+          chrome.storage.sync.set({ userHistory: user.history });
         }
         user.isSummarizing = false;
-        console.log(user);
+        console.log("user history:", user.history);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -65,11 +59,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           });
         }
         user.isSummarizing = false;
-        console.log(user);
       });
   }
-  return true;
-});
+}
 
 async function summarizeText(text: string): Promise<string> {
   if (!openai) {
