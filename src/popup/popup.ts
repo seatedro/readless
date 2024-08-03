@@ -9,6 +9,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const editApiKeyBtn = document.getElementById(
     "editApiKeyBtn",
   ) as HTMLButtonElement;
+  const saveApiKeyBtn = document.getElementById(
+    "saveApiKeyBtn",
+  ) as HTMLButtonElement;
   const apiKeyStatus = document.getElementById(
     "apiKeyStatus",
   ) as HTMLParagraphElement;
@@ -20,8 +23,9 @@ document.addEventListener("DOMContentLoaded", () => {
   chrome.storage.sync.get("openaiApiKey", (result) => {
     if (result.openaiApiKey) {
       apiKeyStatus.textContent = "API key is set!";
-      apiKeyInput.value = "••••••••••••••••";
+      apiKeyInput.value = result.openaiApiKey;
       apiKeyInput.disabled = true;
+      openSidePanelBtn.classList.remove("hidden");
     } else {
       apiKeyStatus.textContent = "Please enter your OpenAI API key";
       apiKeyInput.disabled = false;
@@ -33,17 +37,22 @@ document.addEventListener("DOMContentLoaded", () => {
     apiKeyInput.disabled = false;
     apiKeyInput.value = "";
     apiKeyInput.focus();
+    editApiKeyBtn.classList.add("hidden");
+    saveApiKeyBtn.classList.remove("hidden");
+    openSidePanelBtn.classList.add("hidden");
   });
 
-  // Save the API key to storage
-  apiKeyInput.addEventListener("blur", () => {
+  // Handle API save
+  saveApiKeyBtn.addEventListener("click", () => {
     const apiKey = apiKeyInput.value.trim();
-    if (apiKey) {
+    if (apiKey && apiKey.startsWith("sk-")) {
       chrome.storage.sync.set({ openaiApiKey: apiKey }, () => {
         apiKeyStatus.textContent = "API key saved!";
-        apiKeyInput.value = "••••••••••••••••";
         apiKeyInput.disabled = true;
       });
+      editApiKeyBtn.classList.remove("hidden");
+      saveApiKeyBtn.classList.add("hidden");
+      openSidePanelBtn.classList.remove("hidden");
     } else {
       apiKeyStatus.textContent = "Please enter a valid API key!";
     }

@@ -23,6 +23,14 @@
 						d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
 				</svg>
 			</button>
+			<button id="saveApiKeyBtn"
+				class="absolute right-2 top-2 text-gray-500 dark:text-gray-400 hidden">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none"
+					stroke="currentColor" stroke-width="2" stroke-linecap="round"
+					stroke-linejoin="round" class="lucide lucide-check h-5 w-5">
+					<path d="M20 6 9 17l-5-5" />
+				</svg>
+			</button>
 		</div>
 
 		<p id="apiKeyStatus" class="text-sm text-gray-600 dark:text-gray-400 mb-4"></p>
@@ -30,7 +38,7 @@
 		<p class="text-gray-700 dark:text-gray-300 mb-4">Select text on any webpage to summarize.</p>
 
 		<button id="openSidePanelBtn"
-			class="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300">Open
+			class="hidden w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300">Open
 			Side Panel</button>
 	</div>
 	<script src="popup.js"></script>
