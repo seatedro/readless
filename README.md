@@ -8,6 +8,8 @@ follow the instructions in the [chrome extension docs](https://developer.chrome.
 
 - [x] get api key from storage
 - [x] working app lulw
-- [ ] better ui
-- [ ] tailwind ig?
+- [x] better ui
+- [x] tailwind ig?
+- [x] summarize on select
+- [ ] add summary history
 - [ ] stream the response
