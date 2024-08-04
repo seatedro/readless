@@ -2,7 +2,9 @@
 
 ## setup
 
-follow the instructions in the [chrome extension docs](https://developer.chrome.com/docs/extensions/get-started)
+1. download the latest release from the [releases page](https://github.com/seatedro/readless/releases).
+2. unzip the release.
+3. load the unpacked extension in chrome as described [here](https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked).
 
 ## Todo
 
