@@ -20,7 +20,7 @@ jobs:
       - run: bun run build
 
       - name: zip dist
-        run: zip -r dist.zip dist
+        run: mv dist readless && zip -r readless.zip readless
 
       - name: create release
         id: create_release
@@ -39,7 +39,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist.zip
+          asset_path: ./readless.zip
           asset_name: readless.zip
           asset_content_type: application/zip
 
