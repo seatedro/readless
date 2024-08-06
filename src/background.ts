@@ -91,12 +91,12 @@ function handleSidepanelMessage(msg: any) {
       sidepanelPort.postMessage({ action: "summarizing" });
       summarizeText(msg.text, activeTab.id!)
         .then((summary) => {
-          if (sidepanelPort) {
-            sidepanelPort.postMessage({
-              action: "displaySummary",
-              summary: summary,
-            });
-          }
+          // if (sidepanelPort) {
+          //   sidepanelPort.postMessage({
+          //     action: "displaySummary",
+          //     summary: summary,
+          //   });
+          // }
           user.current[activeTab.id!].isSummarizing = false;
           console.log("user history:", user);
         })
@@ -123,7 +123,7 @@ async function summarizeText(text: string, tabId: number): Promise<string> {
 
   user.current[tabId].apiCalls++;
 
-  const response = await openai.chat.completions.create({
+  const runner = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
       {
@@ -136,10 +136,20 @@ async function summarizeText(text: string, tabId: number): Promise<string> {
       },
     ],
     max_tokens: 150,
+    stream: true,
   });
 
-  const summary =
-    response.choices[0].message.content || "No summary generated.";
+  let summary = "";
+  for await (const chunk of runner) {
+    const content = chunk.choices[0]?.delta?.content || "";
+    summary += content;
+    if (sidepanelPort) {
+      sidepanelPort.postMessage({
+        action: "streamSummary",
+        chunk: content,
+      });
+    }
+  }
 
   user.current[tabId].history.push({
     originalText: text,

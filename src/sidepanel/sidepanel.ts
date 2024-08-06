@@ -7,6 +7,7 @@ UIkit.use(Icons);
 window.UIkit = UIkit;
 
 let port: chrome.runtime.Port;
+let currentSumamry = "";
 
 document.addEventListener("DOMContentLoaded", () => {
   setTheme();
@@ -14,25 +15,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const summaryContent = document.getElementById(
     "summaryContent",
   ) as HTMLDivElement;
-  const loadingSpinner = document.getElementById(
-    "loadingSpinner",
-  ) as HTMLDivElement;
 
   port = chrome.runtime.connect(undefined, { name: "readless" });
 
   port.onMessage.addListener((request) => {
-    if (request.action === "displaySummary") {
-      console.log("displaying summary");
-      loadingSpinner.classList.toggle("hidden");
-      loadingSpinner.classList.toggle("flex");
-      summaryContent.textContent = request.summary;
+    if (request.action === "streamSummary") {
+      console.log("streaming summary");
+      currentSumamry += request.chunk;
+      summaryContent.textContent = currentSumamry;
     } else if (request.action === "error") {
-      loadingSpinner.classList.toggle("hidden");
-      loadingSpinner.classList.toggle("flex");
       summaryContent.textContent = `error: ${request.message}`;
     } else if (request.action === "summarizing") {
-      loadingSpinner.classList.toggle("hidden");
-      loadingSpinner.classList.toggle("flex");
+      currentSumamry = "";
       summaryContent.textContent = "";
     } else if (request.action === "updateTabData") {
       updateSidePanel(request.tabData);
