@@ -13,7 +13,7 @@
 		<div id="summary" class="flex-1 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md overflow-y-auto">
 			<h2 class="flex justify-center text-xl font-bold mb-2 text-gray-800 dark:text-white">summary
 			</h2>
-			<div id="loadingSpinner" class="hidden fill-white justify-center items-center">
+			<div id="loadingSpinner" class="hidden dark:fill-white justify-center items-center">
 				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
 					fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
 					stroke-linejoin="round"
@@ -30,6 +30,15 @@
 			</div>
 			<div id="summaryContent" class="text-gray-700 dark:text-gray-300"></div>
 		</div>
+
+		<div id="historicalSummaries" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+			<h2 class="text-xl font-semibold mb-2 dark:text-white flex justify-center">history
+			</h2>
+			<ul uk-accordion id="accordionContainer">
+				<!-- Accordion items will be dynamically inserted here -->
+			</ul>
+		</div>
+
 		<div id="statusLine"
 			class="w-full text-sm text-gray-600 dark:text-gray-400 p-4 flex gap-2 items-center">
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"

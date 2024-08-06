@@ -10,6 +10,7 @@
     "@rspack/core": "^0.7.5",
     "@types/bun": "latest",
     "chrome-types": "^0.1.297",
+    "css-loader": "^7.1.2",
     "tailwindcss": "^3.4.7",
     "typescript": "^5.5.2"
   },
@@ -17,6 +18,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "franken-ui": "^0.1.3",
     "openai": "^4.53.2"
   },
   "private": true,

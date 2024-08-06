@@ -13,6 +13,9 @@ module.exports = {
     filename: "[name].js",
   },
   mode: "production",
+  experiments: {
+    css: false,
+  },
   resolve: {
     extensions: [".ts", ".js"],
   },
@@ -23,9 +26,14 @@ module.exports = {
         use: "builtin:swc-loader",
         exclude: /node_modules/,
       },
+      {
+        test: /\.css$/,
+        use: [rspack.CssExtractRspackPlugin.loader, "css-loader"],
+      },
     ],
   },
   plugins: [
+    new rspack.CssExtractRspackPlugin({}),
     new rspack.HtmlRspackPlugin({
       template: "./src/popup/popup.html",
       filename: "popup.html",
