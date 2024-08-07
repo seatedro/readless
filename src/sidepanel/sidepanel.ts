@@ -1,5 +1,5 @@
 import { setTheme } from "../util/theme";
-import { type TabData } from "../background";
+import { type SummaryItem, type TabData } from "../background";
 import { UIkit, Icons } from "franken-ui/uikit/js/dist";
 
 UIkit.use(Icons);
@@ -20,7 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   port.onMessage.addListener((request) => {
     if (request.action === "streamSummary") {
-      console.log("streaming summary");
       currentSumamry += request.chunk;
       summaryContent.textContent = currentSumamry;
     } else if (request.action === "error") {
@@ -57,29 +56,10 @@ function updateSidePanel(tabData: TabData) {
       .slice(0, -1)
       .reverse()
       .forEach((item, index) => {
-        const accordionItem = document.createElement("li");
-        // accordionItem.className =
-        //   "mb-2 border border-gray-200 dark:border-gray-700 rounded";
-
-        const summary = document.createElement("a");
-        summary.href = "";
-        summary.className =
-          "uk-accordion-title p-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700";
-        //TODO: Need to create a title element for the summary
-        summary.textContent = `Summary ${tabData.history.length - index - 1}`;
-
-        const icon = document.createElement("span");
-        icon.className = "uk-accordion-icon";
-        icon.setAttribute("uk-icon", "icon: chevron-down; ratio: 0.8");
-        summary.appendChild(icon);
-
-        const content = document.createElement("div");
-        content.className =
-          "uk-accordion-content p-2 border-t border-gray-200 dark:border-gray-700";
-        content.textContent = item.summary;
-
-        accordionItem.appendChild(summary);
-        accordionItem.appendChild(content);
+        const accordionItem = createSummaryItem(
+          item,
+          tabData.history.length - index - 1,
+        );
         accordionContainer.appendChild(accordionItem);
       });
   } else {
@@ -90,10 +70,54 @@ function updateSidePanel(tabData: TabData) {
   apiCallCount.textContent = `${tabData.apiCalls}`;
 }
 
+function createSummaryItem(item: SummaryItem, index: number): HTMLLIElement {
+  const accordionItem = document.createElement("li");
+  const summary = document.createElement("a");
+  summary.href = "";
+  summary.className =
+    "uk-accordion-title p-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700";
+  //TODO: Need to create a title element for the summary
+  summary.textContent = `Summary ${index}`;
+
+  const icon = document.createElement("span");
+  icon.className = "uk-accordion-icon";
+  icon.setAttribute("uk-icon", "icon: chevron-down; ratio: 0.8");
+  summary.appendChild(icon);
+
+  const content = document.createElement("div");
+  content.className =
+    "uk-accordion-content p-2 border-t border-gray-200 dark:border-gray-700";
+  content.textContent = item.summary;
+
+  accordionItem.appendChild(summary);
+  accordionItem.appendChild(content);
+
+  // Highlight original text
+  accordionItem.addEventListener("click", () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0].id) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: "highlightText",
+          text: item.originalText,
+          domPath: item.domPath,
+          rangeInfo: item.rangeInfo,
+        });
+      }
+    });
+  });
+
+  return accordionItem;
+}
+
 // Listen for messages from the content script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "textSelected" && port) {
-    port.postMessage({ action: "textSelected", text: request.text });
+    port.postMessage({
+      action: "textSelected",
+      text: request.text,
+      domPath: request.domPath,
+      rangeInfo: request.rangeInfo,
+    });
   }
   return true;
 });

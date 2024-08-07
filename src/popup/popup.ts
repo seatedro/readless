@@ -1,4 +1,9 @@
 import { setTheme } from "../util/theme";
+import { UIkit, Icons } from "franken-ui/uikit/js/dist";
+
+UIkit.use(Icons);
+// @ts-ignore
+window.UIkit = UIkit;
 
 document.addEventListener("DOMContentLoaded", () => {
   setTheme();
@@ -63,6 +68,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const activeTab = tabs[0];
       if (activeTab.id) {
         chrome.sidePanel.open({ windowId: activeTab.windowId });
+        window.close();
+      } else {
+        alert("idk what happened lol...");
+        window.close();
       }
     });
   });

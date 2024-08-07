@@ -1,0 +1,10 @@
+.readless-highlight {
+	background-color: yellow;
+	tranition: all 0.5s ease-in-out;
+}
+
+::highlight(highlight) {
+	background-color: yellow;
+	color: black;
+	tranition: all 0.5s ease-in-out;
+}

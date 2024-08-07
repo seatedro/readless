@@ -4,12 +4,25 @@ let openai: OpenAI;
 let sidepanelPort: chrome.runtime.Port | null = null;
 let currentTabId: number | null = null;
 
+export type SummaryItem = {
+  summary: string;
+  originalText: string;
+  domPath: string;
+  rangeInfo: {
+    startContainerPath: number[];
+    startOffset: number;
+    endContainerPath: number[];
+    endOffset: number;
+  };
+};
+
 export type TabData = {
   url: string;
-  history: { originalText: string; summary: string }[];
+  history: SummaryItem[];
   isSummarizing: boolean;
   apiCalls: number;
 };
+
 type UserData = {
   current: {
     [tabId: number]: TabData;
@@ -18,6 +31,7 @@ type UserData = {
     [url: string]: Pick<TabData, "history" | "apiCalls">;
   };
 };
+
 let user: UserData = { current: {}, old: {} };
 
 chrome.tabs.onActivated.addListener((activeInfo) => {
@@ -61,7 +75,6 @@ chrome.runtime.onConnect.addListener((port) => {
     sidepanelPort = port;
     chrome.storage.sync.get(["openaiApiKey", "userHistory"], (result) => {
       if (result.openaiApiKey) {
-        console.log("OpenAI API key found in storage");
         openai = new OpenAI({ apiKey: result.openaiApiKey });
       }
       if (result.userHistory) {
@@ -87,18 +100,12 @@ function handleSidepanelMessage(msg: any) {
       !user.current[activeTab.id].isSummarizing &&
       sidepanelPort
     ) {
+      const { text, domPath, rangeInfo } = msg;
       user.current[activeTab.id].isSummarizing = true;
       sidepanelPort.postMessage({ action: "summarizing" });
-      summarizeText(msg.text, activeTab.id!)
-        .then((summary) => {
-          // if (sidepanelPort) {
-          //   sidepanelPort.postMessage({
-          //     action: "displaySummary",
-          //     summary: summary,
-          //   });
-          // }
+      summarizeText(text, activeTab.id!, domPath, rangeInfo)
+        .then(() => {
           user.current[activeTab.id!].isSummarizing = false;
-          console.log("user history:", user);
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -114,7 +121,12 @@ function handleSidepanelMessage(msg: any) {
   });
 }
 
-async function summarizeText(text: string, tabId: number): Promise<string> {
+async function summarizeText(
+  text: string,
+  tabId: number,
+  domPath: string,
+  rangeInfo: any,
+): Promise<string> {
   if (!openai) {
     throw new Error("API key not set");
   }
@@ -128,14 +140,15 @@ async function summarizeText(text: string, tabId: number): Promise<string> {
     messages: [
       {
         role: "system",
-        content: "you are a helpful assistant that summarizes text.",
+        content:
+          "you are a helpful assistant that summarizes text. maintain the core of the original text. generate a small, concise summary that does not exceed one paragraph.",
       },
       {
         role: "user",
         content: `please summarize the following text:\n\n${text}`,
       },
     ],
-    max_tokens: 150,
+    max_tokens: 256,
     stream: true,
   });
 
@@ -154,7 +167,10 @@ async function summarizeText(text: string, tabId: number): Promise<string> {
   user.current[tabId].history.push({
     originalText: text,
     summary: summary,
+    domPath: domPath,
+    rangeInfo: rangeInfo,
   });
+
   const newUserData = {
     history: user.current[tabId].history,
     apiCalls: user.current[tabId].apiCalls,

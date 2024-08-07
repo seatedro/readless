@@ -21,6 +21,9 @@
       "matches": [
         "<all_urls>"
       ],
+      "css": [
+        "highlight.css"
+      ],
       "js": [
         "content.js"
       ]
